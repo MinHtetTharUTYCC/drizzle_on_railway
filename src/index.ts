@@ -1,18 +1,9 @@
 import 'dotenv/config';
 import { createServer } from 'node:http';
-import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
-import { Pool } from 'pg';
 import { InsertUser, postsTable, usersTable } from './schema';
 import { like, or } from 'drizzle-orm';
-
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-});
-
-const db = drizzle({
-    client: pool,
-});
+import { db } from './db';
 
 await migrate(db, { migrationsFolder: './migrations' });
 
