@@ -65,9 +65,15 @@ const server = createServer(async (req, res) => {
                 age: userData.age,
                 email: userData.email,
             };
-            const [user] = await db.insert(usersTable).values(newUser).returning();
-            res.writeHead(201, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(user));
+            try {
+                const [user] = await db.insert(usersTable).values(newUser).returning();
+
+                res.writeHead(201, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify(user));
+            } catch (error) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Failed to create user', details: error }));
+            }
         });
         return;
     }
@@ -85,9 +91,14 @@ const server = createServer(async (req, res) => {
                 content: postData.content,
                 userId: postData.userId,
             };
-            const [post] = await db.insert(postsTable).values(newPost).returning();
-            res.writeHead(201, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(post));
+            try {
+                const [post] = await db.insert(postsTable).values(newPost).returning();
+                res.writeHead(201, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify(post));
+            } catch (error) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Failed to create post', details: error }));
+            }
         });
         return;
     }
